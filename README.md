@@ -16,7 +16,7 @@ This is a modding framework to allow easy access for adding additional/replacing
   "entries": [
     {
       "file": "ExampleMP3AudioFile.mp3",
-	  "Description": "Example subtitles for bing bong"
+	  "subtitle": "Example subtitles for bing bong"
     },
     {
       "file": "ExampleWAVAudioFile.wav"
