@@ -102,3 +102,8 @@ _NOTE: This is not synced between players so ensure all players have the same co
 ## <ins>Issues</ins>
 
 If I have missed any upgrades or you find any bugs feel free  to open an issue on the [GitHub repository](https://github.com/W1ll-Gale/BingBongVoiceLineAPI) or message me on discord (@`mrbyte.exe`) and i will try my best to fix any issues or update the mod for future updates.
+
+## <ins>Disclaimer</ins>
+
+Uses ffmpeg (LGPL 2.1 license https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) to convert clips, no warranties provided project is under MIT license https://mit-license.org/
+ffmpeg download source: https://ffmpeg.org/download.html
