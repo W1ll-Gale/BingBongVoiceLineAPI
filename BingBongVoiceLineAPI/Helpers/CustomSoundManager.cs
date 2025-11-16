@@ -37,27 +37,56 @@ namespace BingBongVoiceLineAPI.Helpers
                 yield break;
             }
 
-            int loadedCount = 0;
+            int totalFilesToLoad = configEntries.Count;
+            int filesProcessed = 0;
+
+            BingBongVoiceLineAPI.Log.LogInfo($"CustomSoundManager: Starting to load {totalFilesToLoad} audio clips...");
+
+            if (totalFilesToLoad == 0)
+            {
+                _isLoaded = true;
+                BingBongVoiceLineAPI.Log.LogInfo("CustomSoundManager: No clips to load.");
+                yield break;
+            }
+
             foreach (BingBongResponseConfigEntry entry in configEntries)
             {
-                string audioPath = Path.Combine(entry.configDirectory, entry.file);
-                yield return AudioLoader.LoadAudioClipFromPath(audioPath, clip =>
+                BingBongResponseConfigEntry currentEntry = entry;
+
+                string audioPath = Path.Combine(currentEntry.configDirectory, currentEntry.file);
+
+                StartCoroutine(AudioLoader.LoadAudioClipFromPath(audioPath, clip =>
                 {
-                    if (clip != null)
+                    try
                     {
-                        _audioClips[entry.file] = clip;
-                        BingBongVoiceLineAPI.Log.LogInfo($"CustomSoundManager: Loaded {entry.file}");
+                        if (clip != null)
+                        {
+                            _audioClips[currentEntry.file] = clip;
+                            BingBongVoiceLineAPI.Log.LogInfo($"CustomSoundManager: Loaded {currentEntry.file}");
+                        }
+                        else
+                        {
+                            BingBongVoiceLineAPI.Log.LogError($"CustomSoundManager: Failed to load {currentEntry.file}");
+                        }
                     }
-                    else
+                    catch (System.Exception ex)
                     {
-                        BingBongVoiceLineAPI.Log.LogError($"CustomSoundManager: Failed to load {entry.file}");
+                        BingBongVoiceLineAPI.Log.LogError($"CustomSoundManager: Error in callback for {currentEntry.file}: {ex.Message}");
                     }
-                    loadedCount++;
-                });
+                    finally
+                    {
+                        filesProcessed++;
+                    }
+                }));
+            }
+
+            while (filesProcessed < totalFilesToLoad)
+            {
+                yield return null;
             }
 
             _isLoaded = true;
-            BingBongVoiceLineAPI.Log.LogInfo($"CustomSoundManager: Loaded {loadedCount} clips.");
+            BingBongVoiceLineAPI.Log.LogInfo($"CustomSoundManager: Finished loading. {_audioClips.Count} / {totalFilesToLoad} clips loaded.");
         }
 
         public AudioClip GetClip(string fileName)
